@@ -1,0 +1,30 @@
+{ config, pkgs, ... }:
+{
+environment.systemPackages = with pkgs; [
+autoconf
+automake
+gettext
+flex
+bison
+intltool
+libtool
+pkgconfig
+perl
+curl
+sqlite
+postgresql92
+cmake
+python
+ncurses
+curl
+zlib
+patchelf
+m4
+glib
+gdb
+gmp
+mpfr
+gcc
+gnumake
+  ];
+}

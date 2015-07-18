@@ -1,0 +1,33 @@
+general {
+        colors = true
+        interval = 5
+}
+
+#order += "run_watch VPN"
+order += "cpu_usage"
+order += "cpu_temperature 0"
+order += "battery 0"
+order += "tztime local"
+
+cpu_temperature 0 {
+     format = " T: %degrees °C "
+     path = "/sys/devices/platform/coretemp.0/hwmon/hwmon1/temp1_input"
+}
+
+battery 0 {
+        format = "%status %percentage %remaining %emptytime"
+        low_threshold = 15
+
+}
+
+#run_watch VPN {
+#        pidfile = "/var/run/vpnc/pid"
+#}
+
+tztime local {
+        format = " %Y-%m-%d %H:%M:%S "
+}
+
+cpu_usage {
+        format = " %usage "
+}

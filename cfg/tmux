@@ -1,0 +1,25 @@
+setw -g utf8 on
+set-option -g status-utf8 on
+set -g default-terminal "screen-256color" 
+set -s escape-time 0
+set -g base-index 1
+set-option -g status-position top
+
+setw -g aggressive-resize on
+set -g status-bg black
+set -g status-fg green
+set -g status-left ""
+set -g status-right ""
+set-window-option -g window-status-current-bg blue
+
+# pane border
+set-option -g pane-border-fg colour235 #base02
+set-option -g pane-active-border-fg colour240 #base01
+
+# bindings
+bind-key a last-window
+bind-key \ split-window -h
+bind-key | split-window -h
+bind-key - split-window -v
+
+
