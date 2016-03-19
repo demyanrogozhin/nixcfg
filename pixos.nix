@@ -1,18 +1,31 @@
 { config, pkgs, ... }:
 
 {
+  imports =
+    [
+      ./devenv.nix
+    ];
   
-  boot.kernelPackages = pkgs.linuxPackages_3_19;
-  
+  boot.kernelPackages = pkgs.linuxPackages_4_3;
+
   nixpkgs.config = {
     packageOverrides = pkgs: {
       stdenv = pkgs.stdenv // {
         platform = pkgs.stdenv.platform // {
-          kernelExtraConfig = "CHROME_PLATFORMS y" ;
+          kernelExtraConfig =
+            ''
+              CHROME_PLATFORMS y
+              X86_MSR y
+            '' ;
         };
       };
 
       bluez = pkgs.bluez5;
+
+      emacs = pkgs.stdenv.lib.overrideDerivation pkgs.emacs (oldAttrs: {
+        configureFlags = "--with-x --with-xft --with-x-toolkit=no --without-gconf --without-sound";
+      });
+
     };
   };
 
@@ -23,6 +36,8 @@
     "tmux.conf".text = builtins.readFile ./cfg/tmux;
   };
 
+  system.autoUpgrade.enable = true;
+  system.autoUpgrade.channel = https://nixos.org/channels/nixos-15.09;
   systemd.extraConfig = "";
 
   services.logind.extraConfig = ''
@@ -40,7 +55,13 @@
       enable = true;
       configFile = "/etc/i3.conf";
     };
-    displayManager.slim.enable = true;
+    displayManager.slim = {
+      enable = true;
+      theme = pkgs.fetchurl {
+        url    = "https://github.com/jagajaga/nixos-slim-theme/archive/Final.tar.gz";
+        sha256 = "4cab5987a7f1ad3cc463780d9f1ee3fbf43603105e6a6e538e4c2147bde3ee6b";
+      };
+    };
     desktopManager.xterm.enable = false;
     startGnuPGAgent = true;
     layout = "us,ru";
@@ -64,7 +85,7 @@
     tapButtons = true;
     twoFingerScroll = true;
   };
-
+  fonts.fontconfig.dpi = 96;
   boot.cleanTmpDir = true;
   boot.kernel.sysctl = {
     "fs.inotify.max_user_watches" = "1048576";
@@ -77,16 +98,23 @@
   };
 
   environment.systemPackages = with pkgs; [
-    btrfsProgs gptfdisk parted libressl dropbear fuse sshfsFuse
-    emacs fish zsh joe git rsync wget psmisc gnupg tmux 
+    btrfsProgs gptfdisk parted libressl # dropbear
+    fuse sshfsFuse
+    emacs zsh joe git rsync wget psmisc gnupg tmux silver-searcher
     networkmanagerapplet pavucontrol 
     evilvte liberation_ttf
     gimp nodejs unzip i3status mosh
-    dmenu dunst alock xlibs.xev 
-    python27Packages.glances
-    chromium firefox-bin w3m surf
+    dmenu dunst i3lock xlibs.xhost xlibs.xev xlibs.xauth
+    python27Packages.glances ponymix
+    # chromium
+    firefox
+    conkeror
+    w3m surf torbrowser
+    # qutebrowser
+    weston
   ];
 
+  programs.zsh.enable = true;
   environment.shells = [ "/run/current-system/sw/bin/zsh" ];
   environment.variables.EDITOR = pkgs.lib.mkForce "jmacs";
   environment.variables.VISUAL = "emacsclient";
@@ -95,6 +123,7 @@
   nix.useChroot = true;
 
   nixpkgs.config.evilvte.config = builtins.readFile ./cfg/evilvte;
+
   services.udisks2.enable = true;
   services.gnome3.at-spi2-core.enable = true;
 

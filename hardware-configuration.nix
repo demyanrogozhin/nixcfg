@@ -13,10 +13,23 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/ffe0d318-966d-4f4d-a69e-60c24d40adb0";
+    { device = "/dev/disk/by-uuid/0e1b9d1e-85c5-466a-8796-e01f615ead67";
       fsType = "btrfs";
-      options = "noatime,ssd,autodefrag,compress=zlib,space_cache,degraded,recovery";
+      options = "noatime,ssd,autodefrag,compress=zlib,space_cache,degraded";
     };
+
+  fileSystems."/boot" =
+    { device = "/dev/disk/by-uuid/2da4f944-c10e-4a80-97d5-8968bccef212";
+      fsType = "ext4";
+      options = "noatime";
+    };
+
+  fileSystems."/home" =
+    { device = "/dev/chrome/home";
+      fsType = "btrfs";
+      options = "noatime,ssd,autodefrag,compress=zlib,space_cache,degraded";
+    };
+
   swapDevices =
     [ { device = "/dev/disk/by-label/PIXEL_SWAP"; } ];
 

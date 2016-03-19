@@ -9,7 +9,6 @@
     [
       ./hardware-configuration.nix
       ./pixos.nix
-      ./devenv.nix
     ];
 
   boot.loader.grub = {
@@ -38,7 +37,7 @@
   boot.initrd.extraUtilsCommandsTest = "[ -e $out/bin/keyfile ]";
 
   boot.initrd.luks.devices = [
-    { device = "/dev/disk/by-partlabel/cryptocard"; 
+    { device = "/dev/disk/by-partuuid/413f91ce-dfce-4933-bb9c-c4f750be6be0";
       name = "card";
       keyFile = "/bin/keyfile";
       preLVM = true;

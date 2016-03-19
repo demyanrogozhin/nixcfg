@@ -146,11 +146,11 @@ bar {
         mode hide
         modifier $mod
         hidden_state hide
-        position top
+        position bottom
 }
 
 bindsym $mod+b border toggle
-bindsym Control+Mod1+l exec i3-msg workspace 9 && alock
+bindsym Control+Mod1+l exec i3-msg workspace 9 && i3lock
 hide_edge_borders both
 bindsym $mod+u [urgent="latest"] focus
 
@@ -162,4 +162,4 @@ for_window [title="evilvte"] border none
 
 # Autorun
 
-exec  [ -z "$(pidof dunst)" ] && dunst
+exec --no-startup-id  [ -z "$(pidof dunst)" ] && dunst
