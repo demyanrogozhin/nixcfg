@@ -48,7 +48,7 @@
 
   networking.hostName = "pixos";
   networking.hostId = "b737546f";
-
+  time.timeZone = "Europe/Warsaw";
   users.extraUsers.dmn = {
      name = "dmn";
      group = "dmn";

@@ -6,8 +6,12 @@
       ./devenv.nix
     ];
   
-  boot.kernelPackages = pkgs.linuxPackages_4_3;
+  boot.kernelPackages = pkgs.linuxPackages_4_6;
 
+  nix.extraOptions = ''
+    gc-keep-outputs = true
+    gc-keep-derivations = true
+  '';
   nixpkgs.config = {
     packageOverrides = pkgs: {
       stdenv = pkgs.stdenv // {
@@ -26,6 +30,7 @@
         configureFlags = "--with-x --with-xft --with-x-toolkit=no --without-gconf --without-sound";
       });
 
+      rofi = pkgs.rofi.override { i3Support = true; };
     };
   };
 
@@ -36,8 +41,20 @@
     "tmux.conf".text = builtins.readFile ./cfg/tmux;
   };
 
-  system.autoUpgrade.enable = true;
-  system.autoUpgrade.channel = https://nixos.org/channels/nixos-15.09;
+  services.udev = {
+    extraRules = ''
+KERNEL=="sd?", ACTION=="add", ENV{ID_FS_UUID}=="0d630b58-260e-4fbf-bb53-f7813aab2d42", \
+RUN+="${pkgs.cryptsetup}/bin/cryptsetup luksOpen --key-file /etc/nixos/priv/keyfile /dev/disk/by-uuid/0d630b58-260e-4fbf-bb53-f7813aab2d42 btrbx01", \
+RUN+="/bin/mount -o noatime,ssd,autodefrag,compress=zlib,space_cache,degraded,recovery /dev/mapper/btrbx01 /root/btrbk", \
+RUN+="${pkgs.btrbk}/sbin/btrbk -c /etc/nixos/cfg/btrbk-chrome-home.conf run", \
+RUN+="${pkgs.coreutils}/bin/sync", \
+RUN+="${pkgs.utillinux}/bin/umount /root/btrbk", \
+RUN+="${pkgs.cryptsetup}/bin/cryptsetup close btrbx01"
+    '';
+  };
+
+  #system.autoUpgrade.enable = true;
+  #system.autoUpgrade.channel = https://nixos.org/channels/nixos-15.09;
   systemd.extraConfig = "";
 
   services.logind.extraConfig = ''
@@ -46,9 +63,6 @@
     HandlePowerKey=hibernate
   '';
 
-  services.udev.packages = [
-      pkgs.libmtp
-  ];
   services.xserver = {
     enable = true;
     windowManager.i3 = {
@@ -63,15 +77,17 @@
       };
     };
     desktopManager.xterm.enable = false;
-    startGnuPGAgent = true;
     layout = "us,ru";
     xkbOptions = "ctrl:nocaps,grp:ctrl_shift_toggle";
   };
-  services.xserver.displayManager.desktopManagerHandlesLidAndPower = false;
 
-  hardware.cpu.intel.updateMicrocode = true;
+  # hardware.cpu.intel.updateMicrocode = true;
+
+  # Audio
   hardware.pulseaudio.enable = true;
+  hardware.pulseaudio.package = pkgs.pulseaudioFull;
   hardware.bluetooth.enable = true;
+
   hardware.opengl.s3tcSupport = true;
   services.xserver.useGlamor = true;
   ## services.xserver.multitouch.enable = true;
@@ -98,20 +114,28 @@
   };
 
   environment.systemPackages = with pkgs; [
-    btrfsProgs gptfdisk parted libressl # dropbear
-    fuse sshfsFuse
+    btrfsProgs gptfdisk parted btrbk libressl # dropbear
+    dosfstools #fuse sshfsFuse go-mtpfs
     emacs zsh joe git rsync wget psmisc gnupg tmux silver-searcher
-    networkmanagerapplet pavucontrol 
+    # networkmanagerapplet
+    # pavucontrol
     evilvte liberation_ttf
-    gimp nodejs unzip i3status mosh
-    dmenu dunst i3lock xlibs.xhost xlibs.xev xlibs.xauth
-    python27Packages.glances ponymix
-    # chromium
+    # gimp
+    #nodejs mosh
+    unzip
+    dmenu rofi dunst i3lock i3status libnotify
+    xlibs.xhost xlibs.xev xlibs.xauth
+    #python27Packages.glances
+    ponymix
+    vorbis-tools
+    #chromium
     firefox
-    conkeror
-    w3m surf torbrowser
+    # conkeror
+    w3m surf #torbrowser
     # qutebrowser
-    weston
+    # weston
+    #tor polipo # cjdns
+    # android-udev-rules androidsdk
   ];
 
   programs.zsh.enable = true;
@@ -120,18 +144,18 @@
   environment.variables.VISUAL = "emacsclient";
   environment.variables.TERMINAL = pkgs.lib.mkForce "evilvte";
   networking.networkmanager.enable = true;
-  nix.useChroot = true;
+  nix.useSandbox = true;
 
   nixpkgs.config.evilvte.config = builtins.readFile ./cfg/evilvte;
 
   services.udisks2.enable = true;
-  services.gnome3.at-spi2-core.enable = true;
+  # services.gnome3.at-spi2-core.enable = true;
 
   programs.ssh.startAgent = false;
   powerManagement.cpuFreqGovernor = "powersave";
-  virtualisation.docker.enable = true;
-  virtualisation.docker.extraOptions = "-s btrfs -g /docker";
+  #virtualisation.docker.enable = true;
+  #virtualisation.docker.extraOptions = "-s btrfs -g /docker";
 
-  virtualisation.libvirtd.enable = true;
-  virtualisation.libvirtd.enableKVM = true;
+  # virtualisation.libvirtd.enable = true;
+  # virtualisation.libvirtd.enableKVM = true;
 }

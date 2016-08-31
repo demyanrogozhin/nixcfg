@@ -1,7 +1,25 @@
-#define BACKGROUND_SATURATION 0.15
+#define BACKGROUND_SATURATION 0.0
+#define BACKGROUND_TINT_COLOR "black"
 #define BACKGROUND_OPACITY TRUE
-#define COLOR_STYLE ZENBURN_DARK
-#define COMMAND_AT_ROOT_WINDOW TRUE
+// #define COLOR_STYLE ZENBURN_DARK
+#define COLOR_STYLE USER_CUSTOM
+#define USER_COLOR_00 0x010204 /* black dark */
+#define USER_COLOR_08 0x2c3b4d /* black light */
+#define USER_COLOR_01 0xb9362b /* red dark */
+#define USER_COLOR_09 0xdf483c /* red light */
+#define USER_COLOR_02 0x3bb15a /* green dark */
+#define USER_COLOR_10 0x36a252 /* green light */
+#define USER_COLOR_03 0xec9f14 /* yellow dark */
+#define USER_COLOR_11 0xebc80a /* yellow light */
+#define USER_COLOR_04 0x3e7dbb /* blue dark */
+#define USER_COLOR_12 0x4b92db /* blue light */
+#define USER_COLOR_05 0x8d35b0 /* magenta dark */
+#define USER_COLOR_13 0x964ab6 /* magenta light */
+#define USER_COLOR_06 0x34a284 /* cyan dark */
+#define USER_COLOR_14 0x3ebe99 /* cyan light */
+#define USER_COLOR_07 0xbec3c7 /* white dark */
+#define USER_COLOR_15 0xf8f8f2 /* white light */
+#define COMMAND_AT_ROOT_WINDOW FALSE
 #define COMMAND_DOCK_MODE TRUE
 #define COMMAND_EXEC_PROGRAM TRUE
 #define COMMAND_FULLSCREEN TRUE
@@ -12,10 +30,19 @@
 #define COMMAND_SHOW_HELP TRUE
 #define COMMAND_SHOW_OPTIONS TRUE
 #define COMMAND_SHOW_VERSION TRUE
-#define COMMAND_TAB_NUMBERS TRUE
+#define COMMAND_TAB_NUMBERS FALSE
+#define CURSOR_SHAPE UNDERLINE
+#define CURSOR_BLINKS FALSE
+#define CURSOR_COLOR "cyan"
 #define FONT "Liberation Mono 18"
 #define FONT_ANTI_ALIAS TRUE
 #define FONT_ENABLE_BOLD_TEXT TRUE
+#define HOTKEY TRUE
+#define HOTKEY_COPY CTRL_ALT(GDK_C) || CTRL_ALT(GDK_c)
+#define HOTKEY_PASTE CTRL_ALT(GDK_V) || CTRL_ALT(GDK_v)
+#define HOTKEY_FONT_BIGGER CTRL_ALT(GDK_plus)
+#define HOTKEY_FONT_SMALLER CTRL_ALT(GDK_minus)
+#define HOTKEY_FONT_DEFAULT_SIZE CTRL_ALT(GDK_0)
 #define MOUSE_CTRL_SATURATION TRUE
 #define SCROLL_LINES 100000
 #define SCROLLBAR OFF_R
@@ -27,9 +54,4 @@
 #define TAB_NEW_PATH_EQUAL_OLD TRUE
 #define TAB_SHOW_INFO_AT_TITLE TRUE
 #define TABBAR FALSE
-#define HOTKEY TRUE
-#define HOTKEY_COPY CTRL_ALT(GDK_C) || CTRL_ALT(GDK_c)
-#define HOTKEY_PASTE CTRL_ALT(GDK_V) || CTRL_ALT(GDK_v)
-#define HOTKEY_FONT_BIGGER CTRL_ALT(GDK_plus)
-#define HOTKEY_FONT_SMALLER CTRL_ALT(GDK_minus)
-#define HOTKEY_FONT_DEFAULT_SIZE CTRL_ALT(GDK_0)
+#define WINDOW_TITLE_DYNAMIC TRUE
