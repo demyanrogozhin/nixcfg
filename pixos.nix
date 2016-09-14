@@ -30,7 +30,7 @@
         configureFlags = "--with-x --with-xft --with-x-toolkit=no --without-gconf --without-sound";
       });
 
-      rofi = pkgs.rofi.override { i3Support = true; };
+      # rofi = pkgs.rofi.override { i3Support = true; };
     };
   };
 
@@ -131,10 +131,10 @@ RUN+="${pkgs.cryptsetup}/bin/cryptsetup close btrbx01"
     #chromium
     firefox
     # conkeror
-    w3m surf #torbrowser
+    w3m surf torbrowser
     # qutebrowser
     # weston
-    #tor polipo # cjdns
+    tor polipo # cjdns
     # android-udev-rules androidsdk
   ];
 
