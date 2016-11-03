@@ -12,6 +12,7 @@
     gc-keep-outputs = true
     gc-keep-derivations = true
   '';
+
   nixpkgs.config = {
     packageOverrides = pkgs: {
       stdenv = pkgs.stdenv // {
@@ -41,6 +42,22 @@
     "tmux.conf".text = builtins.readFile ./cfg/tmux;
   };
 
+  systemd.user.services.emacs = {
+    description = "Emacs Daemon";
+    environment = {
+      NIX_PROFILES = "${pkgs.lib.concatStringsSep " " config.environment.profiles}";
+      TERMINFO_DIRS = "/run/current-system/sw/share/terminfo";
+    };
+    serviceConfig = {
+      Type = "forking";
+      ExecStart = "${pkgs.emacs}/bin/emacs --daemon";
+      ExecStop = "${pkgs.emacs}/bin/emacsclient --eval (kill-emacs)";
+      Restart = "always";
+    };
+    wantedBy = [ "default.target" ];
+  };
+  systemd.services.emacs.enable = true;
+
   services.udev = {
     extraRules = ''
 KERNEL=="sd?", ACTION=="add", ENV{ID_FS_UUID}=="0d630b58-260e-4fbf-bb53-f7813aab2d42", \
@@ -53,8 +70,8 @@ RUN+="${pkgs.cryptsetup}/bin/cryptsetup close btrbx01"
     '';
   };
 
-  #system.autoUpgrade.enable = true;
-  #system.autoUpgrade.channel = https://nixos.org/channels/nixos-15.09;
+  # system.autoUpgrade.enable = true;
+  # system.autoUpgrade.channel = https://nixos.org/channels/nixos-15.09;
   systemd.extraConfig = "";
 
   services.logind.extraConfig = ''
@@ -81,6 +98,7 @@ RUN+="${pkgs.cryptsetup}/bin/cryptsetup close btrbx01"
     xkbOptions = "ctrl:nocaps,grp:ctrl_shift_toggle";
   };
 
+
   # hardware.cpu.intel.updateMicrocode = true;
 
   # Audio
@@ -93,6 +111,9 @@ RUN+="${pkgs.cryptsetup}/bin/cryptsetup close btrbx01"
   ## services.xserver.multitouch.enable = true;
   services.printing.enable = false;
   nixpkgs.config.allowUnfree = true;
+
+  ## desktop effects
+  # services.compton.enable = true;
   services.xserver.wacom.enable = true;
   services.xserver.synaptics = {
     enable = true;
@@ -101,6 +122,7 @@ RUN+="${pkgs.cryptsetup}/bin/cryptsetup close btrbx01"
     tapButtons = true;
     twoFingerScroll = true;
   };
+
   fonts.fontconfig.dpi = 96;
   boot.cleanTmpDir = true;
   boot.kernel.sysctl = {
@@ -153,8 +175,9 @@ RUN+="${pkgs.cryptsetup}/bin/cryptsetup close btrbx01"
 
   programs.ssh.startAgent = false;
   powerManagement.cpuFreqGovernor = "powersave";
-  #virtualisation.docker.enable = true;
-  #virtualisation.docker.extraOptions = "-s btrfs -g /docker";
+
+  # virtualisation.docker.enable = true;
+  # virtualisation.docker.extraOptions = "-s btrfs -g /docker";
 
   # virtualisation.libvirtd.enable = true;
   # virtualisation.libvirtd.enableKVM = true;
