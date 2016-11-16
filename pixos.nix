@@ -6,7 +6,7 @@
       ./devenv.nix
     ];
   
-  boot.kernelPackages = pkgs.linuxPackages_4_6;
+  boot.kernelPackages = pkgs.linuxPackages_4_8;
 
   nix.extraOptions = ''
     gc-keep-outputs = true
@@ -45,13 +45,16 @@
   systemd.user.services.emacs = {
     description = "Emacs Daemon";
     environment = {
+      GTK_DATA_PREFIX = config.system.path;
+      GTK_PATH = "${config.system.path}/lib/gtk-3.0:${config.system.path}/lib/gtk-2.0";
       NIX_PROFILES = "${pkgs.lib.concatStringsSep " " config.environment.profiles}";
+      SSH_AUTH_SOCK = "/run/user/%U/gnupg/S.gpg-agent.ssh";
       TERMINFO_DIRS = "/run/current-system/sw/share/terminfo";
     };
     serviceConfig = {
       Type = "forking";
       ExecStart = "${pkgs.emacs}/bin/emacs --daemon";
-      ExecStop = "${pkgs.emacs}/bin/emacsclient --eval (kill-emacs)";
+      ExecStop = "${pkgs.emacs}/bin/emacsclient --eval \"(kill-emacs)\"";
       Restart = "always";
     };
     wantedBy = [ "default.target" ];

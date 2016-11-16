@@ -162,4 +162,4 @@ for_window [title="evilvte"] border none
 # Autorun
 
 exec --no-startup-id xsetroot
-exec --no-startup-id  [ -z "$(pidof dunst)" ] && dunst
+exec --no-startup-id [ -z "$(pidof dunst)" ] && dunst
