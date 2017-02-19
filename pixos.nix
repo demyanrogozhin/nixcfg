@@ -6,7 +6,7 @@
       ./devenv.nix
     ];
   
-  boot.kernelPackages = pkgs.linuxPackages_4_8;
+  boot.kernelPackages = pkgs.linuxPackages_4_9;
 
   nix.extraOptions = ''
     gc-keep-outputs = true
@@ -154,12 +154,14 @@ RUN+="${pkgs.cryptsetup}/bin/cryptsetup close btrbx01"
     ponymix
     vorbis-tools
     #chromium
-    firefox
+    #chromiumDev
+    #firefox
     # conkeror
-    w3m surf torbrowser
+    w3m surf
     # qutebrowser
     # weston
-    tor polipo # cjdns
+    #tor polipo torbrowser
+    # cjdns
     # android-udev-rules androidsdk
   ];
 
