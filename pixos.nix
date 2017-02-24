@@ -6,7 +6,7 @@
       ./devenv.nix
     ];
   
-  boot.kernelPackages = pkgs.linuxPackages_4_9;
+  boot.kernelPackages = pkgs.linuxPackages_4_10;
 
   nix.extraOptions = ''
     gc-keep-outputs = true
@@ -17,11 +17,7 @@
     packageOverrides = pkgs: {
       stdenv = pkgs.stdenv // {
         platform = pkgs.stdenv.platform // {
-          kernelExtraConfig =
-            ''
-              CHROME_PLATFORMS y
-              X86_MSR y
-            '' ;
+          kernelExtraConfig = builtins.readFile ./cfg/pixos-kernel-config;
         };
       };
 
@@ -97,12 +93,30 @@ RUN+="${pkgs.cryptsetup}/bin/cryptsetup close btrbx01"
       };
     };
     desktopManager.xterm.enable = false;
+
+    # Keyboard layout
     layout = "us,ru";
     xkbOptions = "ctrl:nocaps,grp:ctrl_shift_toggle";
+    # Pointer
+    wacom = { enable = true; };
+
+    synaptics = {
+        enable = true;
+        buttonsMap = [ 1 2 3 ];
+        palmDetect = true;
+        tapButtons = true;
+        twoFingerScroll = true;
+    };
+    # display
+    dpi = 239;
+    useGlamor = true;
+    multitouch = { enable = true; };
+    # desktop effects
+    #services.compton.enable = true;
   };
 
 
-  # hardware.cpu.intel.updateMicrocode = true;
+  hardware.cpu.intel.updateMicrocode = true;
 
   # Audio
   hardware.pulseaudio.enable = true;
@@ -110,23 +124,10 @@ RUN+="${pkgs.cryptsetup}/bin/cryptsetup close btrbx01"
   hardware.bluetooth.enable = true;
 
   hardware.opengl.s3tcSupport = true;
-  services.xserver.useGlamor = true;
-  ## services.xserver.multitouch.enable = true;
   services.printing.enable = false;
   nixpkgs.config.allowUnfree = true;
 
-  ## desktop effects
-  # services.compton.enable = true;
-  services.xserver.wacom.enable = true;
-  services.xserver.synaptics = {
-    enable = true;
-    buttonsMap = [ 1 2 3 ];
-    palmDetect = true;
-    tapButtons = true;
-    twoFingerScroll = true;
-  };
-
-  fonts.fontconfig.dpi = 96;
+  # fonts.fontconfig.dpi = 96;
   boot.cleanTmpDir = true;
   boot.kernel.sysctl = {
     "fs.inotify.max_user_watches" = "1048576";
@@ -152,12 +153,13 @@ RUN+="${pkgs.cryptsetup}/bin/cryptsetup close btrbx01"
     xlibs.xhost xlibs.xev xlibs.xauth
     #python27Packages.glances
     ponymix
-    vorbis-tools
+    #vorbis-tools
     #chromium
     #chromiumDev
     #firefox
     # conkeror
-    w3m surf
+    w3m
+    # surf
     # qutebrowser
     # weston
     #tor polipo torbrowser
